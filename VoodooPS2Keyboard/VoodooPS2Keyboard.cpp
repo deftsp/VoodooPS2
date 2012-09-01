@@ -127,6 +127,13 @@ bool ApplePS2Keyboard::start(IOService * provider)
   } else {
     emacsMode = false;
   }
+    
+    if (kOSBooleanTrue == getProperty("Make capslock into application")) {
+        viMode = true;
+    } else {
+        viMode = false;
+    }
+    
   if (kOSBooleanTrue == getProperty("Swap alt and windows key")) {
     macintoshMode = true;
   } else {
@@ -319,8 +326,7 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
   // Convert the scan code into a key code.
   //
 
-  if (_extendCount == 0)
-  {
+  if (_extendCount == 0) {
     keyCode = scanCode & ~kSC_UpBit;
 
     // from "The Undocumented PC" chapter 8, The Keyboard System some
@@ -332,20 +338,21 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
     // code byte, right alt is a double scan code byte. Left and
     // right windows keys are double bytes.  This is all set by an
     // entry in Info.plist for ApplePS2Keyboard.kext
-    switch (keyCode)
-    {
-      case 0x3A: 
-	if (emacsMode == true) {
-	  keyCode = 0x60; 
-	}
-	break;			// caps lock becomes ctrl
+    switch (keyCode) {
+      case 0x3A:
+            if (viMode == true) {
+                keyCode = 0x72;  // caps lock becomes application
+            } else if (emacsMode == true) {
+                keyCode = 0x60;
+            }
+            break;			// caps lock becomes ctrl
       case 0x38: 
-	if (macintoshMode == true) {
-	  keyCode = 0x70; 
-	}
-	break;		// left alt becomes left windows
+            if (macintoshMode == true) {
+                keyCode = 0x70; 
+            }
+            break;		// left alt becomes left windows
     }
-  }
+    }
   else
   {
     _extendCount--;

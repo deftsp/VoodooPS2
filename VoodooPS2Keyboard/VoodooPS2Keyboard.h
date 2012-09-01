@@ -66,6 +66,7 @@ private:
   UInt8                    _powerControlHandlerInstalled:1;
   UInt8                    _ledState;
 
+  bool              viMode;         // make caps lock to application key
   bool			    emacsMode;		// make caps lock into a control key
   bool			    macintoshMode;	// swap alt and windows key meaning
 	bool logScan; //enable/disable log scan codes
