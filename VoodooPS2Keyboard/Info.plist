@@ -32,12 +32,16 @@
 			<string>ApplePS2Keyboard</string>
 			<key>IOProviderClass</key>
 			<string>ApplePS2KeyboardDevice</string>
-			<key>Make capslock into control</key>
+			<key>Make capslock into left control key</key>
+			<false/>
+			<key>Make capslock into left option key</key>
+			<false/>
+			<key>Make capslock into left command key</key>
+			<false/>
+			<key>Make capslock into application key</key>
 			<false/>
 			<key>Swap alt and windows key</key>
 			<true/>
-			<key>Make capslock into application</key>
-			<false/>
 		</dict>
 	</dict>
 	<key>NSHumanReadableCopyright</key>

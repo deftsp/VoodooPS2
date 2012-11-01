@@ -2,13 +2,13 @@
  * Copyright (c) 1998-2000 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
- * 
+ *
  * The contents of this file constitute Original Code as defined in and
  * are subject to the Apple Public Source License Version 1.1 (the
  * "License").  You may not use this file except in compliance with the
  * License.  Please obtain a copy of the License at
  * http://www.apple.com/publicsource and read it before using this file.
- * 
+ *
  * This Original Code and all software distributed under the License are
  * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -16,7 +16,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
  * License for the specific language governing rights and limitations
  * under the License.
- * 
+ *
  * @APPLE_LICENSE_HEADER_END@
  */
 
@@ -107,62 +107,77 @@ ApplePS2Keyboard * ApplePS2Keyboard::probe(IOService * provider, SInt32 * score)
 bool ApplePS2Keyboard::start(IOService * provider)
 {
 
-  //
-  // The driver has been instructed to start.   This is called after a
-  // successful attach.
-  //
+    //
+    // The driver has been instructed to start.   This is called after a
+    // successful attach.
+    //
 
-  if (!super::start(provider))  return false;
+    if (!super::start(provider))  return false;
 
-  //
-  // Maintain a pointer to and retain the provider object.
-  //
+    //
+    // Maintain a pointer to and retain the provider object.
+    //
 
-  _device = (ApplePS2KeyboardDevice *)provider;
-  _device->retain();
+    _device = (ApplePS2KeyboardDevice *)provider;
+    _device->retain();
 
 
-  if (kOSBooleanTrue == getProperty("Make capslock into control")) {
-    emacsMode = true;
-  } else {
-    emacsMode = false;
-  }
-    
-    if (kOSBooleanTrue == getProperty("Make capslock into application")) {
-        viMode = true;
+    if (kOSBooleanTrue == getProperty("Make capslock into left control key")) {
+        capsLockToControlMode = true;
     } else {
-        viMode = false;
+        capsLockToControlMode = false;
     }
-    
-  if (kOSBooleanTrue == getProperty("Swap alt and windows key")) {
-    macintoshMode = true;
-  } else {
-    macintoshMode = false;
-  }
-	logScan = false;
-  //
-  // Reset and enable the keyboard.
-  //
 
-  initKeyboard();
 
-  //
-  // Install our driver's interrupt handler, for asynchronous data delivery.
-  //
+    if (kOSBooleanTrue == getProperty("Make capslock into application key")) {
+        capsLockToApplicationMode = true;
+    } else {
+        capsLockToApplicationMode = false;
+    }
 
-  _device->installInterruptAction(this,
-            OSMemberFunctionCast(PS2InterruptAction,this,&ApplePS2Keyboard::interruptOccurred));
-  _interruptHandlerInstalled = true;
+    if (kOSBooleanTrue == getProperty("Make capslock into left option key")) {
+        capsLockToOptionMode = true;
+    } else {
+        capsLockToOptionMode = false;
+    }
 
-  //
-  // Install our power control handler.
-  //
+    if (kOSBooleanTrue == getProperty("Make capslock into left command key")) {
+        capsLockToCommandMode = true;
+    } else {
+        capsLockToCommandMode = false;
+    }
 
-  _device->installPowerControlAction( this,
-           OSMemberFunctionCast(PS2PowerControlAction,this, &ApplePS2Keyboard::setDevicePowerState ));
-  _powerControlHandlerInstalled = true;
 
-  return true;
+    if (kOSBooleanTrue == getProperty("Swap alt and windows key")) {
+        macintoshMode = true;
+    } else {
+        macintoshMode = false;
+    }
+
+    logScan = false;
+    //
+    // Reset and enable the keyboard.
+    //
+
+    initKeyboard();
+
+    //
+    // Install our driver's interrupt handler, for asynchronous data delivery.
+    //
+
+    _device->installInterruptAction(this,
+                                    OSMemberFunctionCast(PS2InterruptAction,this,&ApplePS2Keyboard::interruptOccurred));
+    _interruptHandlerInstalled = true;
+
+    //
+    // Install our power control handler.
+    //
+
+    _device->installPowerControlAction( this,
+                                        OSMemberFunctionCast(PS2PowerControlAction,this, &ApplePS2Keyboard::setDevicePowerState ));
+    _powerControlHandlerInstalled = true;
+
+    return true;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -288,7 +303,7 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
 	if (logScan) {
 		IOLog("_%02x", scanCode);
 	}
-	
+
   if (scanCode == kSC_Extend)
   {
     _extendCount = 1;
@@ -340,15 +355,20 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
     // entry in Info.plist for ApplePS2Keyboard.kext
     switch (keyCode) {
       case 0x3A:
-            if (viMode == true) {
+            if (capsLockToApplicationMode == true) {
                 keyCode = 0x72;  // caps lock becomes application
-            } else if (emacsMode == true) {
-                keyCode = 0x60;
+            } else if (capsLockToControlMode == true) {
+                keyCode = 0x1d; 		// caps lock becomes left ctrl
+            } else if (capsLockToOptionMode == true) {
+                keyCode = 0x38;  // caps lock becomes left option
+            } else if (capsLockToCommandMode == true) {
+                keyCode = 0x71;  // caps lock becomes left command
             }
-            break;			// caps lock becomes ctrl
-      case 0x38: 
+
+            break;
+      case 0x38:
             if (macintoshMode == true) {
-                keyCode = 0x70; 
+                keyCode = 0x70;
             }
             break;		// left alt becomes left windows
     }
@@ -365,7 +385,7 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
 	 if (scanCode == 0xAA) {
 		 logScan = !logScan;
 		 IOLog("\n");
-	 } 
+	 }
 
 	  switch (scanCode & ~kSC_UpBit)
 	  {
@@ -373,19 +393,19 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
 		  case 0x30: keyCode = 0x7d; break;		   // E030 = volume up
 		  case 0x2e: keyCode = 0x7e; break;		   // E02E = volume down
 		  case 0x20: keyCode = 0x7f; break;		   // E020 = volume mute
-			  
+
 		  case 0x19: keyCode = 0x78; break;		//E019 = next track
 		  case 0x10: keyCode = 0x77; break;		//E010 = prev track
 		  case 0x24: keyCode = 0x76; break;		//E024 = stop
 		  case 0x22: keyCode = 0x73; break;		//E022 = play/pause
-			  
+
 			  //	  case 0x21: keyCode = 0x54; break;		//E021 = calculator
 			  //	  case 0x16: keyCode = 0x55; break;		//E016 = logout
 		  case 0x0b: keyCode = 0x7a; break;		//E04d = VideoMirror
-			  
+
 			  //	  case 0x4c: keyCode = 0x5A; break;		//E04c = My documents
 			  //	  case 0x32: keyCode = 0x5B; break;		//E032 = WWW
-			  
+
 		  case 0x5e: keyCode = 0x7c; break;            // E05E = power
 		  case 0x5f:                                   // E05F = sleep
 			  keyCode = 0;
@@ -399,13 +419,13 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
 		  case 0x12:  //Slice - it is nightmare! Do not use!!! It is hard reset.
 			  cold_reboot();
 			  break;
-			  
+
 		  case 0x1D: keyCode = 0x60; break;            // ctrl
 		  case 0x38:             			   // right alt may become right command
 			  if (macintoshMode == true) {
-				  keyCode = 0x71; 
+				  keyCode = 0x71;
 			  } else {
-				  keyCode = 0x61;			  
+				  keyCode = 0x61;
 			  }
 			  break;
 		  case 0x1C: keyCode = 0x62; break;            // enter
@@ -424,7 +444,7 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
 		  case 0x45: keyCode = 0x6F; break;            // Pause
 		  case 0x5B: 				   // left Windows key may become alt
 			  if (macintoshMode == true) {
-				  keyCode = 0x38; 			   // alt 
+				  keyCode = 0x38; 			   // alt
 			  } else {
 				  keyCode = 0x70;			   // Left command
 			  }
@@ -443,7 +463,7 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
 			  return false;
 	  }
   }
-	
+
   if (keyCode == 0)
   {
 	IOLog("%s: Unknown scan code: 0x%x\n", getName(), scanCode);
@@ -476,12 +496,12 @@ bool ApplePS2Keyboard::dispatchKeyboardEventWithScancode(UInt8 scanCode)
   //
 #if APPLESDK
 	clock_get_uptime(&now);
-#else 
+#else
   clock_get_uptime((uint64_t*)&now);
 #endif
 
   UInt8 adbKeyCode = PS2ToADBMap[keyCode];
-  
+
   if (adbKeyCode == DEADKEY)
   {
 	IOLog("%s: Unknown ADB key for PS2 key: 0x%x\n", getName(), keyCode);
@@ -623,7 +643,7 @@ void ApplePS2Keyboard::setCommandByte(UInt8 setBits, UInt8 clearBits)
     // was modified since we first read it.
     //
 
-  } while (request->commandsCount != 4);  
+  } while (request->commandsCount != 4);
 
   _device->freeRequest(request);
 }
@@ -637,7 +657,7 @@ const unsigned char * ApplePS2Keyboard::defaultKeymapOfLength(UInt32 * length)
     //
     static const unsigned char appleUSAKeyMap[] = {
         0x00,0x00,
-        
+
         // Modifier Defs
 	0x0a,   //Number of modifier keys.  Was 7
         //0x00,0x01,0x39,  //CAPSLOCK, uses one byte.
@@ -652,7 +672,7 @@ const unsigned char * ApplePS2Keyboard::defaultKeymapOfLength(UInt32 * length)
         0x0a,0x01,0x3e, //Right control
         0x0b,0x01,0x3d, //Right Option
         0x0c,0x01,0x36, //Right Command
-        
+
         // key deffs
         0x7f,0x0d,0x00,0x61,
         0x00,0x41,0x00,0x01,0x00,0x01,0x00,0xca,0x00,0xc7,0x00,0x01,0x00,0x01,0x0d,0x00,
@@ -713,9 +733,9 @@ const unsigned char * ApplePS2Keyboard::defaultKeymapOfLength(UInt32 * length)
         0x00,0xfe,0x2f,0x00,0xfe,0x21,0x00,0xfe,0x31,0x00,0xfe,0x20,
         0x00,0x01,0xac, //ADB=0x7b is left arrow
         0x00,0x01,0xae, //ADB = 0x7c is right arrow
-        0x00,0x01,0xaf, //ADB=0x7d is down arrow.  
-        0x00,0x01,0xad, //ADB=0x7e is up arrow	 
-        0x0f,0x02,0xff,0x04,            
+        0x00,0x01,0xaf, //ADB=0x7d is down arrow.
+        0x00,0x01,0xad, //ADB=0x7e is up arrow
+        0x0f,0x02,0xff,0x04,
         0x00,0x31,0x02,0xff,0x04,0x00,0x32,0x02,0xff,0x04,0x00,0x33,0x02,0xff,0x04,0x00,
         0x34,0x02,0xff,0x04,0x00,0x35,0x02,0xff,0x04,0x00,0x36,0x02,0xff,0x04,0x00,0x37,
         0x02,0xff,0x04,0x00,0x38,0x02,0xff,0x04,0x00,0x39,0x02,0xff,0x04,0x00,0x30,0x02,
@@ -736,15 +756,15 @@ const unsigned char * ApplePS2Keyboard::defaultKeymapOfLength(UInt32 * length)
 		//Slice
 		0x0d,0x50, //Launch Panel ?
 		0x0f,0x4d, //VIDMIRROR
-		0x10,0x34, //PLAY 
+		0x10,0x34, //PLAY
 		0x11,0x42, //NEXT
 		0x12,0x40, //PREVIOUS
 		0x14,0x3f, //REWIND
-		
+
 		//
-        0x0a,0x47   //NX_KEYTYPE_NUM_LOCK is 10, ADB combines with CLEAR key for numlock		
+        0x0a,0x47   //NX_KEYTYPE_NUM_LOCK is 10, ADB combines with CLEAR key for numlock
     };
- 
+
     *length = sizeof(appleUSAKeyMap);
     return appleUSAKeyMap;
 }

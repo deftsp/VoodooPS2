@@ -2,13 +2,13 @@
  * Copyright (c) 1998-2000 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
- * 
+ *
  * The contents of this file constitute Original Code as defined in and
  * are subject to the Apple Public Source License Version 1.1 (the
  * "License").  You may not use this file except in compliance with the
  * License.  Please obtain a copy of the License at
  * http://www.apple.com/publicsource and read it before using this file.
- * 
+ *
  * This Original Code and all software distributed under the License are
  * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -16,7 +16,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
  * License for the specific language governing rights and limitations
  * under the License.
- * 
+ *
  * @APPLE_LICENSE_HEADER_END@
  */
 
@@ -56,45 +56,47 @@
 
 class ApplePS2Keyboard : public IOHIKeyboard
 {
-  OSDeclareDefaultStructors(ApplePS2Keyboard);
+    OSDeclareDefaultStructors(ApplePS2Keyboard);
 
 private:
-  ApplePS2KeyboardDevice * _device;
-  UInt32                   _keyBitVector[KBV_NUNITS];
-  UInt8                    _extendCount;
-  UInt8                    _interruptHandlerInstalled:1;
-  UInt8                    _powerControlHandlerInstalled:1;
-  UInt8                    _ledState;
+    ApplePS2KeyboardDevice * _device;
+    UInt32                   _keyBitVector[KBV_NUNITS];
+    UInt8                    _extendCount;
+    UInt8                    _interruptHandlerInstalled:1;
+    UInt8                    _powerControlHandlerInstalled:1;
+    UInt8                    _ledState;
 
-  bool              viMode;         // make caps lock to application key
-  bool			    emacsMode;		// make caps lock into a control key
-  bool			    macintoshMode;	// swap alt and windows key meaning
-	bool logScan; //enable/disable log scan codes
+    bool              capsLockToApplicationMode;         // make caps lock into application key
+    bool              capsLockToControlMode;      // make caps lock into control key
+    bool              capsLockToOptionMode;      // make caps lock into option key
+    bool              capsLockToCommandMode;      // make caps lock into command key
+    bool              macintoshMode;  // swap alt and windows key meaning
+    bool logScan; //enable/disable log scan codes
 
-  virtual bool dispatchKeyboardEventWithScancode(UInt8 scanCode);
-  virtual void setCommandByte(UInt8 setBits, UInt8 clearBits);
-  virtual void setLEDs(UInt8 ledState);
-  virtual void setKeyboardEnable(bool enable);
-  virtual void initKeyboard();
-  virtual void setDevicePowerState(UInt32 whatToDo);
+    virtual bool dispatchKeyboardEventWithScancode(UInt8 scanCode);
+    virtual void setCommandByte(UInt8 setBits, UInt8 clearBits);
+    virtual void setLEDs(UInt8 ledState);
+    virtual void setKeyboardEnable(bool enable);
+    virtual void initKeyboard();
+    virtual void setDevicePowerState(UInt32 whatToDo);
 
 protected:
-  virtual const unsigned char * defaultKeymapOfLength(UInt32 * length);
-  virtual void setAlphaLockFeedback(bool locked);
-  virtual void setNumLockFeedback(bool locked);
-  virtual UInt32 maxKeyCodes();
+    virtual const unsigned char * defaultKeymapOfLength(UInt32 * length);
+    virtual void setAlphaLockFeedback(bool locked);
+    virtual void setNumLockFeedback(bool locked);
+    virtual UInt32 maxKeyCodes();
 
 public:
-  virtual bool init(OSDictionary * properties);
-  virtual ApplePS2Keyboard * probe(IOService * provider, SInt32 * score);
+    virtual bool init(OSDictionary * properties);
+    virtual ApplePS2Keyboard * probe(IOService * provider, SInt32 * score);
 
-  virtual bool start(IOService * provider);
-  virtual void stop(IOService * provider);
+    virtual bool start(IOService * provider);
+    virtual void stop(IOService * provider);
 
-  virtual void interruptOccurred(UInt8 scanCode);
+    virtual void interruptOccurred(UInt8 scanCode);
 
-  virtual UInt32 deviceType();
-  virtual UInt32 interfaceID();
+    virtual UInt32 deviceType();
+    virtual UInt32 interfaceID();
 };
 
 #endif /* _APPLEPS2KEYBOARD_H */
