@@ -1028,10 +1028,7 @@
 		1DEB91DE08733DB10010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					x86_64,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1041,7 +1038,7 @@
 					"-DAPPLESDK=0",
 					"-DSNOW_LEO",
 				);
-				SDKROOT = "";
+				SDKROOT = macosx;
 				VALID_ARCHS = "x86_64 i386";
 			};
 			name = Debug;
@@ -1049,7 +1046,7 @@
 		1DEB91DF08733DB10010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				ENABLE_OPENMP_SUPPORT = YES;
 				GCC_AUTO_VECTORIZATION = YES;
@@ -1069,6 +1066,7 @@
 					"-DAPPLESDK=0",
 					"-DSNOW_LEO",
 				);
+				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
@@ -1076,6 +1074,7 @@
 		AB73060B0F96412C0088A57F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = NO;
@@ -1102,6 +1101,7 @@
 		AB73060C0F96412C0088A57F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = YES;
@@ -1202,10 +1202,7 @@
 		ABA0F22B0F96518500547050 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					x86_64,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = NO;
@@ -1231,6 +1228,7 @@
 		ABA0F22C0F96518500547050 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = YES;
@@ -1254,7 +1252,7 @@
 		ABC8E15712B3EC120091ECB7 /* Release Leopard */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ENABLE_OPENMP_SUPPORT = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = "";
@@ -1268,7 +1266,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = macosx;
 				VALID_ARCHS = i386;
 			};
 			name = "Release Leopard";
@@ -1309,6 +1307,7 @@
 		ABC8E15A12B3EC120091ECB7 /* Release Leopard */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = YES;
@@ -1357,6 +1356,7 @@
 		ABC8E15C12B3EC120091ECB7 /* Release Leopard */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = YES;
@@ -1436,7 +1436,7 @@
 		ABC8E16C12B3ECB80091ECB7 /* Release Tiger */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ENABLE_OPENMP_SUPPORT = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = "";
@@ -1450,7 +1450,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SDKROOT = macosx;
 				VALID_ARCHS = i386;
 			};
 			name = "Release Tiger";
@@ -1491,6 +1491,7 @@
 		ABC8E16F12B3ECB80091ECB7 /* Release Tiger */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = YES;
@@ -1539,6 +1540,7 @@
 		ABC8E17112B3ECB80091ECB7 /* Release Tiger */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/VoodooPS2Controller.kext/Contents/PlugIns";
 				COPY_PHASE_STRIP = YES;
